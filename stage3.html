@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>태풍 안전 마을 · 3단계</title>
+    <style>
+      :root { --ink:#142a47; --blue:#215ca9; --red:#d5463d; --line:#cbd9e8; --green:#176946; }
+      * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:linear-gradient(145deg,#e6f4ff,#f8fbff 52%,#fff4e8); font-family:"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
+      main { width:min(1180px,calc(100% - 28px)); margin:auto; padding:28px 0 48px; }
+      header { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; margin-bottom:17px; }
+      .step { color:#fff; background:var(--blue); display:inline-block; border-radius:999px; padding:7px 12px; font-size:.88rem; font-weight:850; } h1 { margin:10px 0 6px; letter-spacing:-.065em; font-size:clamp(1.7rem,3.8vw,2.7rem); line-height:1.15; } .lead { color:#566980; margin:0; line-height:1.6; }
+      .scoreboard { display:flex; gap:8px; } .stat { min-width:85px; padding:10px 12px; border:1px solid var(--line); border-radius:13px; text-align:center; background:#fff; color:#607288; font-size:.78rem; } .stat b { display:block; color:var(--blue); font-size:1.45rem; }
+      .instructions { margin:0 0 16px; padding:12px 15px; border-left:5px solid var(--red); border-radius:11px; background:#fff; border-top:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line); line-height:1.55; }
+      .map { position:relative; overflow:hidden; width:100%; aspect-ratio:16/9; border:4px solid #fff; border-radius:22px; background:#c6d6e3; box-shadow:0 18px 44px #204b7720; touch-action:none; } .map img { display:block; width:100%; height:100%; object-fit:cover; pointer-events:none; user-select:none; }
+      .spot { position:absolute; border:2px dashed transparent; border-radius:12px; background:transparent; cursor:pointer; } .spot:hover,.spot:focus-visible { outline:none; border-color:#fff; background:#12456c30; }
+      .spot[data-id="tree-1"] { left:3%;top:14%;width:20%;height:22%; }.spot[data-id="window-1"] { left:76%;top:12%;width:16%;height:17%; }.spot[data-id="sign-1"] { left:62%;top:31%;width:14%;height:15%; }.spot[data-id="wall-1"] { left:5%;top:49%;width:17%;height:18%; }
+      .spot[data-id="window-2"] { left:51%;top:48%;width:16%;height:19%; }.spot[data-id="tree-2"] { left:37%;top:67%;width:22%;height:22%; }.spot[data-id="sign-2"] { left:64%;top:78%;width:17%;height:15%; }.spot[data-id="wall-2"] { left:84%;top:67%;width:16%;height:25%; }
+      .placed { position:absolute; top:50%;left:50%; transform:translate(-50%,-50%) rotate(-4deg); color:#fff; background:var(--red); border:3px solid white; border-radius:8px; padding:6px 10px; font-size:clamp(.7rem,1.5vw,1rem); font-weight:900; box-shadow:0 4px 0 #9b2d26,0 5px 14px #142c4460; }
+      .tray { display:flex; align-items:center; gap:14px; margin-top:17px; padding:14px 17px; background:#fff; border:1px solid var(--line); border-radius:16px; } .sticker-stack { display:flex; flex-wrap:wrap; gap:7px; } .sticker { cursor:grab; touch-action:none; color:#fff; background:var(--red); border:3px solid white; border-radius:8px; box-shadow:0 3px 0 #9b2d26,0 4px 11px #142c4445; padding:8px 13px; font-weight:900; } .sticker.dragging { cursor:grabbing; position:fixed; z-index:10; opacity:.9; pointer-events:none; } .sticker.selected { outline:4px solid #78afe9; outline-offset:3px; } .sticker.used { display:none; } .tray p { margin:0; color:#586b81; font-size:.9rem; line-height:1.5; }
+      .overlay { position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; background:#112d4dcc; padding:20px; text-align:center; } .overlay[hidden] { display:none; } .modal { max-width:400px; color:#fff; padding:28px; border:1px solid #ffffff4a; border-radius:20px; background:#173f68ed; box-shadow:0 14px 35px #0005; } .modal h2 { margin:0 0 9px; font-size:1.7rem; } .modal p { margin:0 0 18px; line-height:1.6; } .start,.again { cursor:pointer; color:#183e72; background:#fff; border:0; border-radius:10px; padding:11px 17px; font-size:1rem; font-weight:900; } .again { color:#fff; background:var(--blue); border:1px solid #fff5; }
+      @media(max-width:650px) { main { width:min(100% - 18px,1180px); padding-top:20px; } header { gap:8px; }.scoreboard{gap:5px}.stat{min-width:66px;padding:8px}.tray { align-items:flex-start; flex-direction:column; gap:9px; }.map{border-radius:14px;} }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header><div><span class="step">3단계 · 20초 위험 찾기</span><h1>결과가 나타난 곳을 모두 찾으세요.</h1><p class="lead">20초 안에 위험 장소 8곳에 <b>위험</b> 카드를 놓으세요.</p></div><div class="scoreboard"><div class="stat"><b id="timer">20</b>초 남음</div><div class="stat"><b id="score">0 / 8</b>찾은 곳</div></div></header>
+      <p class="instructions"><b>방법</b> · 떨어진 나무, 깨진 유리창, 바닥에 떨어진 간판, 무너진 벽을 찾으세요. 각 결과는 두 곳씩 있습니다.</p>
+      <section class="map" id="map" aria-label="위험 결과가 나타난 확대 마을 지도">
+        <img src="town-map-stage3.png" alt="떨어진 나무, 깨진 유리창, 떨어진 간판, 무너진 벽이 각각 두 곳씩 있는 확대된 마을" />
+        <button class="spot" data-id="tree-1" aria-label="위험 장소 1"></button><button class="spot" data-id="window-1" aria-label="위험 장소 2"></button><button class="spot" data-id="sign-1" aria-label="위험 장소 3"></button><button class="spot" data-id="wall-1" aria-label="위험 장소 4"></button><button class="spot" data-id="window-2" aria-label="위험 장소 5"></button><button class="spot" data-id="tree-2" aria-label="위험 장소 6"></button><button class="spot" data-id="sign-2" aria-label="위험 장소 7"></button><button class="spot" data-id="wall-2" aria-label="위험 장소 8"></button>
+        <div class="overlay" id="overlay"><div class="modal" id="modal"><h2>준비하세요!</h2><p>시작을 누르면 20초가 흐릅니다.<br />위험 카드 8장을 모두 놓으세요.</p><button class="start" id="start">게임 시작</button></div></div>
+      </section>
+      <section class="tray" aria-label="위험 카드 보관함"><div class="sticker-stack" id="stickers"></div><p><b>위험 카드 · 8장</b><br />카드를 하나씩 끌거나, 카드와 장소를 차례로 누르세요.</p></section>
+    </main>
+    <script>
+      const spots=[...document.querySelectorAll('.spot')], stack=document.querySelector('#stickers'), overlay=document.querySelector('#overlay'), modal=document.querySelector('#modal');
+      const timer=document.querySelector('#timer'),score=document.querySelector('#score'); let selected=null, dragging=false, ignoreClick=false, found=0, seconds=20, active=false, interval;
+      for(let i=0;i<8;i++){const card=document.createElement('button');card.className='sticker';card.textContent='위험';card.type='button';card.disabled=true;stack.append(card);}
+      const cards=[...document.querySelectorAll('.sticker')];
+      const clear=()=>{if(selected){selected.classList.remove('selected');selected.setAttribute('aria-pressed','false');}selected=null;};
+      const mark=(spot,card)=>{if(!active||spot.dataset.done==='true')return;spot.dataset.done='true';spot.innerHTML='<span class="placed">위험</span>';card.classList.add('used');found++;score.textContent=`${found} / 8`;clear();if(found===8)finish(true);};
+      const move=(e,card)=>{if(dragging){card.style.left=`${e.clientX-card.offsetWidth/2}px`;card.style.top=`${e.clientY-card.offsetHeight/2}px`;}};
+      cards.forEach(card=>{card.addEventListener('click',()=>{if(active&&!dragging&&!ignoreClick){if(selected===card)clear();else{clear();selected=card;card.classList.add('selected');card.setAttribute('aria-pressed','true');}}});card.addEventListener('pointerdown',e=>{if(!active)return;dragging=true;card.setPointerCapture(e.pointerId);card.classList.add('dragging');move(e,card);});card.addEventListener('pointermove',e=>move(e,card));card.addEventListener('pointerup',e=>{dragging=false;ignoreClick=true;card.classList.remove('dragging');card.style.left='';card.style.top='';const spot=document.elementFromPoint(e.clientX,e.clientY)?.closest('.spot');if(spot)mark(spot,card);setTimeout(()=>ignoreClick=false,0);});});
+      spots.forEach(spot=>spot.addEventListener('click',()=>{if(selected)mark(spot,selected);}));
+      function finish(win){active=false;clearInterval(interval);cards.forEach(card=>card.disabled=true);overlay.hidden=false;modal.innerHTML=win?'<h2>성공!</h2><p>20초 안에 위험 장소 8곳을 모두 찾았어요.</p><button class="again" onclick="location.reload()">다시 하기</button>':'<h2>시간 종료!</h2><p>찾은 위험 장소: '+found+' / 8<br />다시 도전해 보세요.</p><button class="again" onclick="location.reload()">다시 하기</button>'; }
+      document.querySelector('#start').addEventListener('click',()=>{active=true;overlay.hidden=true;cards.forEach(card=>card.disabled=false);interval=setInterval(()=>{seconds--;timer.textContent=seconds;if(seconds===0)finish(false);},1000);});
+    </script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>태풍 안전 마을 · 2단계</title>
+    <style>
+      :root { --ink:#132540; --blue:#1f5dad; --red:#e54b3e; --paper:#f6faff; --line:#cbd9e8; }
+      * { box-sizing:border-box; }
+      body { margin:0; color:var(--ink); background:linear-gradient(150deg,#e7f3ff,#f7fbff 52%,#fff7eb); font-family:"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
+      main { width:min(1120px,calc(100% - 32px)); margin:auto; padding:31px 0 50px; }
+      header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-bottom:20px; }
+      .step { color:#fff; background:var(--blue); display:inline-block; padding:7px 12px; border-radius:999px; font-weight:800; font-size:.88rem; }
+      h1 { font-size:clamp(1.7rem,3.8vw,2.7rem); letter-spacing:-.065em; margin:10px 0 6px; }
+      .lead { color:#52657b; margin:0; line-height:1.65; }
+      .counter { flex:none; text-align:center; color:#4d6179; background:white; border:1px solid var(--line); border-radius:16px; min-width:112px; padding:13px; }
+      .counter b { color:var(--blue); display:block; font-size:1.55rem; }
+      .counter span { font-size:.83rem; }
+      .instructions { margin:0 0 20px; padding:13px 16px; background:#fff; border:1px solid var(--line); border-left:5px solid var(--red); border-radius:13px; line-height:1.6; }
+      .map { position:relative; overflow:hidden; width:100%; aspect-ratio:16/9; border:4px solid white; border-radius:24px; background:#c6d6e3; box-shadow:0 18px 45px #214b7820; touch-action:none; }
+      .map img { width:100%; height:100%; display:block; object-fit:cover; user-select:none; pointer-events:none; }
+      .spot { position:absolute; width:17%; aspect-ratio:1.2; border:2px dashed transparent; border-radius:14px; background:transparent; cursor:pointer; }
+      .spot:hover, .spot:focus-visible, .spot.selected { outline:none; border-color:#fff; background:#1b4b7a33; }
+      .spot[data-place="나무"] { left:7%; top:39%; width:22%; }
+      .spot[data-place="간판"] { left:3%; top:20%; width:16%; }
+      .spot[data-place="벽"] { left:12%; top:2%; width:13%; }
+      .spot[data-place="유리창"] { left:81%; top:50%; width:16%; }
+      .placed { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-4deg); color:#fff; background:var(--red); border:3px solid white; border-radius:8px; padding:7px 12px; font-size:clamp(.78rem,1.8vw,1.12rem); font-weight:900; box-shadow:0 4px 0 #9f271e,0 5px 15px #1b31466b; }
+      .sticker-area { display:flex; align-items:center; gap:16px; min-height:103px; margin-top:20px; padding:16px 20px; background:#fff; border:1px solid var(--line); border-radius:17px; }
+      .sticker-area p { margin:0; color:#51657b; line-height:1.55; font-size:.93rem; }
+      .sticker-stack { display:flex; flex-wrap:wrap; gap:8px; }
+      .sticker { cursor:grab; flex:none; touch-action:none; user-select:none; color:#fff; background:var(--red); border:3px solid white; border-radius:9px; box-shadow:0 4px 0 #9f271e,0 5px 14px #1b31464d; padding:10px 17px; font-size:1.05rem; font-weight:900; transform:rotate(-3deg); }
+      .sticker:nth-child(2) { transform:rotate(2deg); }.sticker:nth-child(3) { transform:rotate(-1deg); }.sticker:nth-child(4) { transform:rotate(3deg); }
+      .sticker.dragging { cursor:grabbing; position:fixed; z-index:10; opacity:.9; pointer-events:none; }
+      .sticker.selected { outline:4px solid #80b8f3; outline-offset:4px; }
+      .sticker.used { display:none; }
+      .complete { display:none; margin-top:18px; padding:16px 19px; background:#e5f7eb; border:1px solid #9bd5af; border-radius:14px; color:#165e3b; font-weight:800; }
+      .complete.show { display:block; }
+      .stage3-link { display:inline-block; margin-top:10px; color:#fff; background:var(--blue); border-radius:8px; padding:9px 12px; text-decoration:none; font-weight:800; }
+      @media (max-width:600px) { main { width:min(100% - 22px,1120px); padding-top:22px; } header { gap:8px; } .counter { min-width:84px; padding:10px; } .sticker-area { align-items:flex-start; flex-direction:column; gap:13px; } .map { border-radius:16px; } }
+      @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div><span class="step">2단계 · 위험 찾기</span><h1>위험한 곳에 스티커를 붙이세요.</h1><p class="lead">1단계에서 본 위험 상황을 떠올리며 마을 안의 네 장소를 찾아보세요.</p></div>
+        <div class="counter" aria-live="polite"><b id="score">0 / 4</b><span>찾은 위험 지역</span></div>
+      </header>
+      <p class="instructions"><b>방법</b> · 아래의 <b>위험</b> 스티커를 끌어서 위험한 장소 위에 놓으세요. 스티커를 먼저 누른 뒤 장소를 누르는 방법도 가능합니다.</p>
+      <section class="map" id="map" aria-label="태풍 안전 마을 지도">
+        <img src="town-map-v2.png" alt="공원, 놀이터, 학교, 병원, 카페, 편의점, 균열이 있는 집, 도서관, 상가, 주차장, 연못이 있는 마을 지도" />
+        <button class="spot" data-place="나무" aria-label="나무가 있는 위험 장소"></button>
+        <button class="spot" data-place="간판" aria-label="간판이 있는 위험 장소"></button>
+        <button class="spot" data-place="벽" aria-label="벽이 있는 위험 장소"></button>
+        <button class="spot" data-place="유리창" aria-label="유리창이 있는 위험 장소"></button>
+      </section>
+      <section class="sticker-area" aria-label="위험 스티커"><div class="sticker-stack"><button class="sticker" aria-pressed="false">위험</button><button class="sticker" aria-pressed="false">위험</button><button class="sticker" aria-pressed="false">위험</button><button class="sticker" aria-pressed="false">위험</button></div><p><b>스티커 보관함 · 4장</b><br />카드를 하나씩 끌거나, 카드와 장소를 차례로 누르세요.</p></section>
+      <div class="complete" id="complete" role="status">안전 표지판을 모두 붙였어요! 이제 “나무가 쓰러질 수 있어요. 조심하세요.”처럼 각 장소를 설명해 보세요.<br /><a class="stage3-link" href="stage3.html">3단계 시작하기</a></div>
+    </main>
+    <script>
+      const stickers = [...document.querySelectorAll('.sticker')];
+      const spots = [...document.querySelectorAll('.spot')];
+      const score = document.querySelector('#score');
+      const complete = document.querySelector('#complete');
+      let selectedSticker = null, dragging = false, ignoreClick = false, placed = 0;
+      const clearSelection = () => { if (selectedSticker) { selectedSticker.classList.remove('selected'); selectedSticker.setAttribute('aria-pressed', 'false'); } selectedSticker = null; };
+      const selectSticker = (sticker) => { if (selectedSticker === sticker) { clearSelection(); return; } clearSelection(); selectedSticker = sticker; sticker.classList.add('selected'); sticker.setAttribute('aria-pressed', 'true'); };
+      const mark = (spot, sticker) => {
+        if (spot.dataset.done !== 'true') {
+          spot.dataset.done = 'true';
+          spot.innerHTML += '<span class="placed">위험</span>';
+          sticker.classList.add('used');
+          placed += 1; score.textContent = `${placed} / 4`;
+          if (placed === 4) complete.classList.add('show');
+        }
+        clearSelection();
+      };
+      stickers.forEach((sticker) => {
+        sticker.addEventListener('click', () => { if (!dragging && !ignoreClick) selectSticker(sticker); });
+        sticker.addEventListener('pointerdown', (event) => { dragging = true; sticker.setPointerCapture(event.pointerId); sticker.classList.add('dragging'); move(event, sticker); });
+        sticker.addEventListener('pointermove', (event) => move(event, sticker));
+        sticker.addEventListener('pointerup', (event) => { dragging = false; ignoreClick = true; sticker.classList.remove('dragging'); sticker.style.left=''; sticker.style.top=''; const under = document.elementFromPoint(event.clientX,event.clientY)?.closest('.spot'); if (under) mark(under, sticker); setTimeout(() => { ignoreClick = false; }, 0); });
+      });
+      const move = (event, sticker) => { if (dragging) { sticker.style.left = `${event.clientX - sticker.offsetWidth / 2}px`; sticker.style.top = `${event.clientY - sticker.offsetHeight / 2}px`; } };
+      spots.forEach((spot) => spot.addEventListener('click', () => { if (selectedSticker) mark(spot, selectedSticker); }));
+    </script>
+  </body>
+</html>
