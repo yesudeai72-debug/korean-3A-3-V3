@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="영상의 마지막 장면을 보고 알맞은 위험 표현을 고르는 한국어 3A 활동" />
+    <title>태풍 안전 마을 · 1단계</title>
+    <style>
+      :root { --ink:#142a47; --blue:#215ca9; --pale:#eaf4ff; --line:#ccdaeb; --red:#c74137; --green:#16704b; }
+      * { box-sizing:border-box; }
+      body { margin:0; color:var(--ink); background:linear-gradient(145deg,#e9f5ff 0%,#f8fbff 55%,#fff6ec); font-family:"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
+      main { width:min(740px,calc(100% - 30px)); margin:0 auto; padding:32px 0 50px; }
+      header { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:19px; }
+      .step { color:#fff; background:var(--blue); display:inline-block; border-radius:999px; padding:7px 12px; font-size:.88rem; font-weight:850; }
+      h1 { letter-spacing:-.065em; margin:10px 0 7px; font-size:clamp(1.72rem,4vw,2.6rem); line-height:1.2; }
+      .lead { margin:0; color:#566a82; line-height:1.65; }
+      .progress { flex:none; min-width:88px; color:#53677e; background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 12px; text-align:center; font-size:.8rem; }
+      .progress b { display:block; color:var(--blue); font-size:1.35rem; }
+      .flow-note { margin:0 0 20px; border-left:5px solid var(--red); border-radius:12px; padding:13px 16px; background:#fff; border-top:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line); color:#41566f; line-height:1.6; }
+      .question { overflow:hidden; background:#fff; border:1px solid var(--line); border-radius:21px; box-shadow:0 18px 50px #234c7517; }
+      .image-area { background:#192b41; aspect-ratio:1/1; }
+      .image-area img { width:100%; height:100%; display:block; object-fit:cover; }
+      .sentence { padding:25px 25px 19px; text-align:center; border-bottom:1px solid #e5edf5; }
+      .sentence p { margin:0; color:#263a54; font-size:clamp(1.35rem,4vw,1.85rem); letter-spacing:-.055em; font-weight:750; line-height:1.5; }
+      .blank { color:var(--blue); display:inline-block; min-width:104px; border-bottom:3px solid #5d8cc5; padding:0 6px 2px; }
+      .blank.filled { border-bottom:0; color:var(--green); }
+      .choices { padding:20px 21px 24px; }
+      .choices h2 { color:#52677f; margin:0 0 12px; font-size:.93rem; }
+      .choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+      .choice { cursor:pointer; color:#1d416e; background:var(--pale); border:2px solid #cbdced; border-radius:13px; min-height:54px; padding:10px; font-size:1.08rem; font-weight:800; }
+      .choice:hover { background:#dceeff; border-color:#78a5dc; }
+      .choice:focus-visible { outline:3px solid #eba64f; outline-offset:2px; }
+      .choice.correct { color:#07583b; background:#e4f7ed; border-color:#4bad7a; }
+      .choice.wrong { color:#9d3029; background:#fff0ed; border-color:#df766b; }
+      .choice:disabled { cursor:default; }
+      .feedback { display:none; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; padding:13px 14px; border-radius:12px; line-height:1.55; }
+      .feedback.show { display:flex; }
+      .feedback.good { color:#126143; background:#e7f8ee; border:1px solid #a6d9b9; }
+      .feedback.try { color:#8c342d; background:#fff2ee; border:1px solid #efc0b9; }
+      #next { cursor:pointer; flex:none; color:white; background:var(--blue); border:0; border-radius:9px; padding:9px 13px; font-weight:800; }
+      #next[hidden] { display:none; }
+      .finish { display:none; text-align:center; padding:34px 20px; }
+      .finish.show { display:block; }
+      .finish h2 { margin:0 0 8px; font-size:1.5rem; }
+      .finish p { color:#52677f; line-height:1.65; }
+      .finish-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:9px; }
+      .restart, .start-stage2 { cursor:pointer; border-radius:9px; padding:10px 14px; font-weight:800; }
+      .restart { color:#1a4f94; background:#edf5ff; border:1px solid #a8c3e2; }
+      .start-stage2 { color:#fff; background:var(--blue); border:1px solid var(--blue); text-decoration:none; }
+      footer { color:#68788d; border-top:1px solid var(--line); margin-top:26px; padding-top:17px; font-size:.85rem; line-height:1.6; }
+      @media (max-width:480px) { main { width:min(100% - 22px,740px); padding-top:22px; } .sentence { padding:21px 15px 17px; } .choices { padding:18px 14px 20px; } .choice-grid { gap:8px; } .choice { font-size:1rem; } .feedback { align-items:flex-start; flex-direction:column; } #next { width:100%; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div><span class="step">1단계 · 마지막 장면 보고 고르기</span><h1>알맞은 서술어를 고르세요.</h1><p class="lead">영상의 마지막 장면을 보고 빈칸에 들어갈 표현을 선택해 보세요.</p></div>
+        <div class="progress"><b id="progress">1 / 4</b>문제</div>
+      </header>
+      <p class="flow-note"><b>이미지</b>를 보고 → <b>빈칸이 있는 문장</b>을 읽고 → 아래의 <b>후보 카드</b>를 누르세요.</p>
+      <section class="question" id="question" aria-label="서술어 고르기 활동">
+        <div class="image-area"><img id="scene" src="frames/tree.png" alt="영상의 마지막 장면" /></div>
+        <div class="sentence"><p id="sentence"></p></div>
+        <div class="choices"><h2>후보 카드</h2><div class="choice-grid" id="choices"></div><div class="feedback" id="feedback" role="status"><span id="feedback-text"></span><button id="next" type="button" hidden>다음 문제</button></div></div>
+      </section>
+      <section class="finish" id="finish"><h2>모두 맞혔어요!</h2><p>이제 2단계 마을 지도에서 위험한 장소를 찾아 <b>위험</b> 스티커를 붙여 보세요.</p><div class="finish-actions"><a class="start-stage2" href="stage2.html">2단계 시작하기</a><button class="restart" type="button" id="restart">1단계 다시 하기</button></div></section>
+      <footer>다음 단계: 마을 지도에서 나무, 간판, 벽, 유리창이 있는 위험 지역을 찾아 표시합니다.</footer>
+    </main>
+    <script>
+      const questions = [
+        { image:'frames/tree.png', alt:'비바람이 부는 길가의 나무', subject:'나무가', answer:'쓰러졌어요' },
+        { image:'frames/window.png', alt:'강한 바람 속 상가의 창문', subject:'창문이', answer:'부서졌어요' },
+        { image:'frames/sign.png', alt:'상점 밖 간판이 있는 거리', subject:'간판이', answer:'떨어졌어요' },
+        { image:'frames/wall.png', alt:'무너진 벽이 있는 장소', subject:'벽이', answer:'무너졌어요' }
+      ];
+      const candidates = ['쓰러졌어요','부서졌어요','떨어졌어요','무너졌어요'];
+      const scene = document.querySelector('#scene'), sentence = document.querySelector('#sentence'), choices = document.querySelector('#choices');
+      const feedback = document.querySelector('#feedback'), feedbackText = document.querySelector('#feedback-text'), next = document.querySelector('#next');
+      const progress = document.querySelector('#progress'), question = document.querySelector('#question'), finish = document.querySelector('#finish');
+      let index = 0, answered = false;
+      function render() {
+        const item = questions[index]; answered = false;
+        scene.src = item.image; scene.alt = item.alt;
+        sentence.innerHTML = `${item.subject} <span class="blank">&nbsp;</span>.`;
+        progress.textContent = `${index + 1} / ${questions.length}`;
+        feedback.className = 'feedback'; next.hidden = true; choices.innerHTML = '';
+        const answerSlots = [2, 0, 3, 1];
+        const distractors = candidates.filter((word) => word !== item.answer).sort(() => Math.random() - 0.5);
+        distractors.splice(answerSlots[index], 0, item.answer);
+        distractors.forEach((word) => { const button = document.createElement('button'); button.className = 'choice'; button.type = 'button'; button.textContent = word; button.addEventListener('click', () => choose(word, button)); choices.append(button); });
+      }
+      function choose(word, button) {
+        if (answered) return;
+        const item = questions[index];
+        if (word !== item.answer) { button.classList.add('wrong'); button.disabled = true; feedback.className = 'feedback try show'; feedbackText.textContent = '다시 생각해 보세요. 마지막 장면을 한 번 더 자세히 보세요.'; return; }
+        answered = true; button.classList.add('correct'); document.querySelectorAll('.choice').forEach((card) => card.disabled = true);
+        sentence.innerHTML = `${item.subject} <span class="blank filled">${item.answer}</span>.`;
+        feedback.className = 'feedback good show'; feedbackText.textContent = '맞아요!'; next.hidden = false; next.textContent = index === questions.length - 1 ? '결과 보기' : '다음 문제';
+      }
+      next.addEventListener('click', () => { index += 1; if (index === questions.length) { question.hidden = true; finish.classList.add('show'); progress.textContent = '4 / 4'; } else render(); });
+      document.querySelector('#restart').addEventListener('click', () => { index = 0; question.hidden = false; finish.classList.remove('show'); render(); });
+      render();
+    </script>
+  </body>
+</html>
